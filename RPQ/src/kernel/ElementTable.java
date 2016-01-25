@@ -9,7 +9,7 @@ import java.util.Hashtable;
  */
 class ElementTable<K,V extends Element<K,?>>
 {
-	Hashtable<K,V> table=new Hashtable<K,V>();
+	private Hashtable<K,V> table=new Hashtable<K,V>();
 	/**
 	 * Maps the <code>key</code> of the <code>element</code> to the element
      * in this table. The element can't be <code>null</code>. <p>
@@ -22,6 +22,15 @@ class ElementTable<K,V extends Element<K,?>>
 	void add(V element)
 	{
 		table.put(element.key,element);
+	}
+	/**
+	 * Remove the element form the table.
+	 * This method does nothing if the key is not in the hashtable.
+	 * @param element the element to be removed
+	 */
+	void remove(V element)
+	{
+		table.remove(element.key);
 	}
 	/**
 	 * Use the identifier to get the element.
