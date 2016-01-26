@@ -3,15 +3,19 @@ package kernel;
 import java.util.Arrays;
 
 /**
- * The kernel priority queue. It uses ElementTable to find an element in constant time.
+ * The kernel priority queue for server. It uses ElementTable to find an element in constant time.
  * <p>This is an unbounded priority queue based on heap. This is a maximam priority queue.
  * The priority is provided by user difined Comparable.
- * <p>The basic operation: Insert, Alter, Delta, Delete max, Get max.
+ * <p>The basic operations: Insert, Alter, Delete max, Get max, Append
+ * <p>Insert and alter don't take immediate effect. They have two steps. 
+ * First is to update the desierd value. 
+ * Then, append this deiserd value and fix the heap.
+ * <p>Also can get or remove one element given the identifier.
  * @param <K> The type of identifier.
  * @param <V> The type of value of priority.
  * @param <T> The type of element in the priority queue.
  */
-public class PriorityQueue<K,V extends Comparable<V>,T extends Element<K,V>>
+public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V>>
 {
 	class Node
 	{
@@ -31,7 +35,7 @@ public class PriorityQueue<K,V extends Comparable<V>,T extends Element<K,V>>
      * The element with the highest value is in queue[0], assuming the queue is nonempty.
      */	
 	@SuppressWarnings("unchecked")
-	private Node[] elements=(PriorityQueue<K, V, T>.Node[]) new Object[INITIAL_CAPACITY];
+	private Node[] elements=(ServerPriorityQueue<K, V, T>.Node[]) new Object[INITIAL_CAPACITY];
 	/**
      * The size of the Priority Queue (the number of elements it contains).
      *
@@ -107,5 +111,93 @@ public class PriorityQueue<K,V extends Comparable<V>,T extends Element<K,V>>
     	}
     	elements[k]=e;
     	e.element.index=k;
+    }
+    /**
+     * Insert a new element in the priority queue.
+     * You need to append it for the insertion to take place.
+     * @param e The element to be inserted.
+     */
+    public void insert(T e)
+    {
+    	table.add(e);
+    	if(size==elements.length)
+    		grow();
+    	elements[size]=new Node(e);
+    	elements[size].desired=e.priority;
+    	e.priority=null;
+    	e.index=size;
+    	size++;
+    }
+    /**
+     * Change the proiroty of the element having the identifier "key".
+     * You need to  append it for the alter to take place.
+     * @param key the identifier.
+     * @param value the disierd value.
+     */
+    public void alter(K key,V value)
+    {
+    	int index=table.get(key).index;
+    	elements[index].desired=value;
+    }
+    /**
+     * Get the element having the max priority.
+     * @return The element having the max priority
+     */
+    public T getMax()
+    {
+    	return size==0? null : elements[0].element;
+    }
+    /**
+     * Delete the element having the max priority.
+     * @return The element having the max priority
+     */
+    public T deleteMax()
+    {
+    	if(size==0)return null;
+    	T rtn=elements[0].element;
+    	size--;
+    	elements[0]=elements[size];
+    	shiftDown(0);
+    	table.remove(rtn);
+    	return rtn;
+    }
+    /**
+     * Write the desierd priority.
+     * @param tar the element to be changed.
+     */
+    public void append(T tar)
+    {
+    	int index=tar.index;
+    	V pre=tar.priority;
+    	tar.priority=elements[index].desired;
+    	elements[index].desired=null;
+    	if(pre==null || pre.compareTo(tar.priority)<0)
+    		shiftUP(index);
+    	else 
+    		shiftDown(index);
+    }
+    /**
+     * Get the element having the identifier "key"
+     * @param key The identifier
+     * @return The element whose identifier is "key"
+     */
+    public T get(K key)
+    {
+    	return table.get(key);
+    }
+    /**
+     * remove the element having the identifier "key"
+     * @param key The identifier
+     * @return The element whose identifier is "key"
+     */
+    public T remove(K key)
+    {
+    	T rtn=table.get(key);
+    	int index=rtn.index;
+    	table.remove(rtn);
+    	size--;
+    	elements[index]=elements[size];
+    	shiftDown(index);
+    	return rtn;
     }
 }

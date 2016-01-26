@@ -20,7 +20,7 @@ public class Element<K,V extends Comparable<V>> implements Comparable<Element<K,
 	public K key=null;
 	public V priority=null;
 	/**The index of this element in the priority queue.*/
-	int index=-1;
+	transient int index=-1;
 	public Element(){}
 	public Element(K key,V priority){this.key=key;this.priority=priority;}
 	/**
