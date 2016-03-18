@@ -4,9 +4,12 @@ import java.util.Arrays;
 
 /**
  * The kernel priority queue for client. It uses ElementTable to find an element in constant time.
+ * 
  * <p>This is an unbounded priority queue based on heap. This is a maximam priority queue.
  * The priority is provided by user difined Comparable.
+ * 
  * <p>The basic operations: Insert, Alter, Delete max, Get max
+ * 
  * <p>Also can get or remove one element given the identifier.
  * @param <K> The type of identifier.
  * @param <V> The type of value of priority.

@@ -4,12 +4,18 @@ import java.util.Arrays;
 
 /**
  * The kernel priority queue for server. It uses ElementTable to find an element in constant time.
+ * 
  * <p>This is an unbounded priority queue based on heap. This is a maximam priority queue.
  * The priority is provided by user difined Comparable.
- * <p>The basic operations: Insert, Alter, Delete max, Get max, Append
+ * 
+ * <p>The basic operations: Insert, Alter, Delete max, Get max, Apply
+ * 
  * <p>Insert and alter don't take immediate effect. They have two steps. 
  * First is to update the desierd value. 
- * Then, append this deiserd value and fix the heap.
+ * Then, apply this deiserd value and fix the heap.
+ * This is efficient when multiple writes on the same element within a short period.
+ * It also make a response in a constant time. Only applying is time consuming.
+ * 
  * <p>Also can get or remove one element given the identifier.
  * @param <K> The type of identifier.
  * @param <V> The type of value of priority.
@@ -150,7 +156,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      * Write the desierd priority.
      * @param tar the element to be changed.
      */
-    public void append(T tar)
+    public void apply(T tar)
     {
     	int index=tar.index;
     	V pre=tar.priority;
