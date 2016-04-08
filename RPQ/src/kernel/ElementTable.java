@@ -3,6 +3,7 @@ package kernel;
 import java.util.Hashtable;
 
 /**
+ * Synchronized.
  * The hash table of the elements. We use this to find the element in constant time.
  * @param <K> The type of the identifier of the element.
  * @param <V> The type of the element.

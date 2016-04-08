@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @param <K> Type of the identifier.
  * @param <T> The type of the priority of this element. It should've implemented {@link Comparable}.
  */
-public class Element<K,V extends Comparable<V>> implements Comparable<Element<K,V>>, Serializable
+public class Element<K,V extends Comparable<V>> implements Comparable<Element<?,?>>, Serializable
 {
 	private static final long serialVersionUID = -7385240577239007826L;
 	public K key=null;
@@ -32,15 +32,16 @@ public class Element<K,V extends Comparable<V>> implements Comparable<Element<K,
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(Element<K,V> o)
+	@SuppressWarnings("unchecked")
+	public int compareTo(Element<?, ?> e)
 	{
-		if (this.priority==null && o.priority==null)
+		if (this.priority==null && e.priority==null)
 			return 0;
 		else if(this.priority==null)
 			return -1;
-		else if(o.priority==null)
+		else if(e.priority==null)
 			return 1;
 		else
-			return this.priority.compareTo(o.priority);
+			return this.priority.compareTo((V) e.priority);
 	}
 }
