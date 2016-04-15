@@ -8,7 +8,8 @@ import java.util.Arrays;
  * <p>This is an unbounded priority queue based on heap. This is a maximam priority queue.
  * The priority is provided by user difined Comparable.
  * 
- * <p>The basic operations: Insert, Alter, Delete max, Get max, Apply
+ * <p>The basic operations: Insert, Alter, Delete max, Get max, Apply.
+ * Insert, Delete max, Apply are synchronized on the queue.
  * 
  * <p>Insert and alter don't take immediate effect. They have two steps. 
  * First is to update the desierd value. 
@@ -52,6 +53,14 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      * The hash table of the element.
      */
     private ElementTable<K,T> table=new ElementTable<K,T>();
+    /**
+     * @return The height of the priority queue
+     */
+    public int getHeight()
+    {
+    	return (int)(Math.log((double)size)/Math.log(2.0));
+    }
+    public int getSize(){return size;}
     /**
      * Increases the capacity by doubling it.
      */
@@ -110,14 +119,17 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public void insert(T e)
     {
-    	table.add(e);
-    	if(size==elements.length)
-    		grow();
-    	elements[size]=new Node(e);
-    	elements[size].desired=e.priority;
-    	e.priority=null;
-    	e.index=size;
-    	size++;
+    	synchronized (elements)
+		{
+	    	table.add(e);
+	    	if(size==elements.length)
+	    		grow();
+	    	elements[size]=new Node(e);
+	    	elements[size].desired=e.priority;
+	    	e.priority=null;
+	    	e.index=size;
+	    	size++;
+		}
     }
     /**
      * Change the proiroty of the element having the identifier "key".
@@ -144,28 +156,37 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public T deleteMax()
     {
-    	if(size==0)return null;
-    	T rtn=elements[0].element;
-    	size--;
-    	elements[0]=elements[size];
-    	shiftDown(0);
-    	table.remove(rtn);
-    	return rtn;
+    	synchronized (elements)
+		{
+	    	if(size==0)return null;
+	    	T rtn=elements[0].element;
+	    	size--;
+	    	elements[0]=elements[size];
+	    	shiftDown(0);
+	    	table.remove(rtn);
+	    	return rtn;
+		}
     }
     /**
      * Write the desierd priority.
+     * @return The highest affected level.
      * @param tar the element to be changed.
      */
-    public void apply(T tar)
+    public int apply(T tar)
     {
-    	int index=tar.index;
-    	V pre=tar.priority;
-    	tar.priority=elements[index].desired;
-    	elements[index].desired=null;
-    	if(pre==null || pre.compareTo(tar.priority)<0)
-    		shiftUP(index);
-    	else 
-    		shiftDown(index);
+    	synchronized (elements)
+		{
+	    	int index=tar.index;
+	    	V pre=tar.priority;
+	    	tar.priority=elements[index].desired;
+	    	elements[index].desired=null;
+	    	if(pre==null || pre.compareTo(tar.priority)<0)
+	    		shiftUP(index);
+	    	else 
+	    		shiftDown(index);
+	    	index=(index<tar.index)?index:tar.index;
+	    	return (int)(Math.log((double)(index+1))/Math.log(2.0));
+		}
     }
     /**
      * Get the element having the identifier "key"
@@ -183,15 +204,18 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public T remove(K key)
     {
-    	T rtn=table.get(key);
-    	int index=rtn.index;
-    	table.remove(rtn);
-    	size--;
-    	elements[index]=elements[size];
-    	if(rtn.compareTo(elements[index].element)>0)
-    		shiftDown(index);
-    	else
-			shiftUP(index);
-    	return rtn;
+    	synchronized (elements)
+		{
+	    	T rtn=table.get(key);
+	    	int index=rtn.index;
+	    	table.remove(rtn);
+	    	size--;
+	    	elements[index]=elements[size];
+	    	if(rtn.compareTo(elements[index].element)>0)
+	    		shiftDown(index);
+	    	else
+				shiftUP(index);
+	    	return rtn;
+		}
     }
 }

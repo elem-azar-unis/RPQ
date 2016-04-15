@@ -24,6 +24,17 @@ public class Element<K,V extends Comparable<V>> implements Comparable<Element<?,
 	public Element(){}
 	public Element(K key,V priority){this.key=key;this.priority=priority;}
 	/**
+	 * @return The level of the Object in the local priority queue.
+	 */
+	public int getLevel()
+	{
+		return (int)(Math.log((double)(index+1))/Math.log(2.0));
+	}
+	public int getIndex()
+	{
+		return index;
+	}
+	/**
 	 * Compares this element with the specified element for order. 
 	 * Returns a negative integer, zero, or a positive integer as 
 	 * this element is less than, equal to, or greater than the specified element. <p>

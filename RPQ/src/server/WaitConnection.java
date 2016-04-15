@@ -15,7 +15,7 @@ public class WaitConnection implements Runnable
 		while(true)
 		{
 			Socket recv=server.accept();
-			//TODO new Thread(new Communicator(***).start();
+			//TODO new Thread(new Communicator(***).start();负责接受客户端的操作信息。
 		}
 	}
 }
