@@ -1,6 +1,9 @@
 package kernel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+
+import message.Content;
 
 /**
  * The kernel priority queue for server. It uses ElementTable to find an element in constant time.
@@ -196,6 +199,22 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     public T get(K key)
     {
     	return table.get(key);
+    }
+    /**
+     * Get the level 0 to level l to update.
+     * @param l the upper level
+     * @return an list of the update information
+     */
+    public ArrayList<Content<?, ?>> getUpdate(int l)
+    {
+    	int n=(int)Math.pow(2,l)-1;
+    	ArrayList<Content<?, ?>> lst=new ArrayList<>(n);
+    	synchronized (elements)
+		{
+			for(int i=0;i<n;i++)
+				lst.add(new Content<K,V>(elements[i].element));
+		}
+    	return lst;
     }
     /**
      * remove the element having the identifier "key"

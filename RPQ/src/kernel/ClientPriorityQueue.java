@@ -3,6 +3,7 @@ package kernel;
 import java.util.Arrays;
 
 /**
+ * Synchronized on the queue.
  * The kernel priority queue for client. It uses ElementTable to find an element in constant time.
  * 
  * <p>This is an unbounded priority queue based on heap. This is a maximam priority queue.
@@ -94,13 +95,16 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public void insert(T e)
     {
-    	table.add(e);
-    	if(size==elements.length)
-    		grow();
-    	elements[size]=e;
-    	e.index=size;
-    	size++;
-    	shiftUP(e.index);
+    	synchronized (elements)
+		{		
+	    	table.add(e);
+	    	if(size==elements.length)
+	    		grow();
+	    	elements[size]=e;
+	    	e.index=size;
+	    	size++;
+	    	shiftUP(e.index);
+		}
     }
     /**
      * Change the proiroty of the element having the identifier "key".
@@ -109,17 +113,20 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public void alter(K key,V value)
     {
-    	int index=table.get(key).index;
-    	if(elements[index].priority.compareTo(value)>0)
-    	{
-    		elements[index].priority=value;
-    		shiftDown(index);
-    	}
-    	else
-    	{
-    		elements[index].priority=value;
-    		shiftUP(index);
-    	}
+    	synchronized (elements)
+		{
+	    	int index=table.get(key).index;
+	    	if(elements[index].priority.compareTo(value)>0)
+	    	{
+	    		elements[index].priority=value;
+	    		shiftDown(index);
+	    	}
+	    	else
+	    	{
+	    		elements[index].priority=value;
+	    		shiftUP(index);
+	    	}
+		}
     }
     /**
      * Get the element having the max priority.
@@ -127,7 +134,10 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public T getMax()
     {
-    	return size==0? null : elements[0];
+    	synchronized (elements)
+		{
+    		return size==0? null : elements[0];
+		}
     }
     /**
      * Delete the element having the max priority.
@@ -135,13 +145,16 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public T deleteMax()
     {
-    	if(size==0)return null;
-    	T rtn=elements[0];
-    	size--;
-    	elements[0]=elements[size];
-    	shiftDown(0);
-    	table.remove(rtn);
-    	return rtn;
+    	synchronized (elements)
+		{
+	    	if(size==0)return null;
+	    	T rtn=elements[0];
+	    	size--;
+	    	elements[0]=elements[size];
+	    	shiftDown(0);
+	    	table.remove(rtn);
+	    	return rtn;
+		}
     }
     /**
      * Get the element having the identifier "key"
@@ -150,7 +163,10 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public T get(K key)
     {
-    	return table.get(key);
+    	synchronized (elements)
+		{
+    		return table.get(key);
+		}
     }
     /**
      * remove the element having the identifier "key"
@@ -159,15 +175,18 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public T remove(K key)
     {
-    	T rtn=table.get(key);
-    	int index=rtn.index;
-    	table.remove(rtn);
-    	size--;
-    	elements[index]=elements[size];
-    	if(rtn.compareTo(elements[index])>0)
-    		shiftDown(index);
-    	else
-			shiftUP(index);
-    	return rtn;
+    	synchronized (elements)
+		{
+	    	T rtn=table.get(key);
+	    	int index=rtn.index;
+	    	table.remove(rtn);
+	    	size--;
+	    	elements[index]=elements[size];
+	    	if(rtn.compareTo(elements[index])>0)
+	    		shiftDown(index);
+	    	else
+				shiftUP(index);
+	    	return rtn;
+		}
     }
 }
