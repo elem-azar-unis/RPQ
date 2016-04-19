@@ -18,6 +18,14 @@ public class TaskQueue
 		}
 	}
 	/**
+	 * @param e the element
+	 * @return if the element is in the taskqueue.
+	 */
+	public boolean has(Element<?,?> e)
+	{
+		return tasks.contains(e);
+	}
+	/**
 	 * Add an unapplied changed element to the queue.
 	 * Won't add an element again if it has been in the queue.
 	 * @param e the element to be added
@@ -44,25 +52,5 @@ public class TaskQueue
 			return rtn;
 		}
 	}
-	/**
-	 * Get the max element in the queue.
-	 * @return the element with the bigest (future) priority.
-	 */
-	public Element<?,?> max()
-	{
-		synchronized (tasks)
-		{
-			if(tasks.isEmpty())
-				return null;
-			Element<?,?> rtn=null;
-			for(Element<?,?> e:tasks)
-			{
-				if(rtn==null || rtn.compareTo(e)<0)
-				{
-					rtn=e;
-				}
-			}
-			return rtn;
-		}
-	}
 }
+

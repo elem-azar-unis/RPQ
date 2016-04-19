@@ -61,6 +61,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public int getHeight()
     {
+    	if(size==0)return -1;
     	return (int)(Math.log((double)size)/Math.log(2.0));
     }
     public int getSize(){return size;}
@@ -117,7 +118,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     }
     /**
      * Insert a new element in the priority queue.
-     * You need to append it for the insertion to take place.
+     * You need to apply it for the insertion to take place.
      * @param e The element to be inserted.
      */
     public void insert(T e)
@@ -128,30 +129,80 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 	    	if(size==elements.length)
 	    		grow();
 	    	elements[size]=new Node(e);
-	    	elements[size].desired=e.priority;
-	    	e.priority=null;
-	    	e.index=size;
+	    	synchronized (e)
+			{
+	    		elements[size].desired=e.priority;
+		    	e.priority=null;
+		    	e.index=size;
+			}
 	    	size++;
 		}
     }
     /**
      * Change the proiroty of the element having the identifier "key".
-     * You need to  append it for the alter to take place.
+     * You need to  apply it for the alter to take place.
      * @param key the identifier.
      * @param value the disierd value.
+     * @return The element
      */
-    public void alter(K key,V value)
+    public T alter(K key,V value)
     {
-    	int index=table.get(key).index;
-    	elements[index].desired=value;
+    	T rtn=table.get(key);
+    	if(rtn==null)return null;
+    	int index=rtn.index;
+    	synchronized (rtn)
+		{
+    		elements[index].desired=value;
+		}
+    	return rtn;
+    }
+    /**
+     * @param index the element
+     * @return the desired priority of the element
+     */
+    public V getDesired(int index)
+    {
+    	return elements[index].desired;
     }
     /**
      * Get the element having the max priority.
+     * @param tasks 
      * @return The element having the max priority
      */
-    public T getMax()
+    public Content<K,V> getMax(TaskQueue tasks)
     {
-    	return size==0? null : elements[0].element;
+    	if(size==0)return null;
+    	if(tasks.isEmpty())return new Content<K,V>(elements[0].element); 
+    	
+    	int index=-1;
+    	for(Element<?,?>e:tasks.tasks)
+    	{
+    		if(index==-1 || elements[index].desired.compareTo(elements[e.index].desired)<0)
+    			index=e.index;
+    	}
+    	
+
+    	T top=null;
+    	for(int i=0;i<=getHeight();i++)
+    	{
+    		boolean get=false;
+    		for(int j=(int) Math.pow(2,i)-1;j<Math.max(size,Math.pow(2,i));j++)
+    		{
+    			if(!tasks.has(elements[j].element))
+    			{
+    				get=true;
+    				if (top==null || top.compareTo(elements[j].element)<0)
+    					top=elements[j].element;
+    			}
+    		}
+    		if(get)break;
+    	}
+    	
+    	if(top==null)return new Content<K,V>(elements[index].element.key,elements[index].desired);
+    	return (top.priority.compareTo(elements[index].desired)<0)?
+    			new Content<K,V>(elements[index].element.key,elements[index].desired) : new Content<K,V>(top);
+    	/*return (elements[0].element.priority.compareTo(elements[index].desired)<0)?
+    			elements[index].element : elements[0].element;*/
     }
     /**
      * Delete the element having the max priority.
@@ -181,8 +232,11 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 		{
 	    	int index=tar.index;
 	    	V pre=tar.priority;
-	    	tar.priority=elements[index].desired;
-	    	elements[index].desired=null;
+	    	synchronized (tar)
+			{
+	    		tar.priority=elements[index].desired;
+		    	elements[index].desired=null;
+			}    	
 	    	if(pre==null || pre.compareTo(tar.priority)<0)
 	    		shiftUP(index);
 	    	else 
@@ -226,6 +280,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     	synchronized (elements)
 		{
 	    	T rtn=table.get(key);
+	    	if(rtn==null) return null;
 	    	int index=rtn.index;
 	    	table.remove(rtn);
 	    	size--;

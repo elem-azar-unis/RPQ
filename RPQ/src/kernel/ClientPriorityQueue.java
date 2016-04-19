@@ -115,7 +115,9 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     {
     	synchronized (elements)
 		{
-	    	int index=table.get(key).index;
+    		T temp=table.get(key);
+    		if(temp==null)return;
+	    	int index=temp.index;
 	    	if(elements[index].priority.compareTo(value)>0)
 	    	{
 	    		elements[index].priority=value;
@@ -178,6 +180,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     	synchronized (elements)
 		{
 	    	T rtn=table.get(key);
+	    	if(rtn==null)return null;
 	    	int index=rtn.index;
 	    	table.remove(rtn);
 	    	size--;
