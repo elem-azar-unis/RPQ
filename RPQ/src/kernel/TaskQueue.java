@@ -35,6 +35,7 @@ public class TaskQueue
 		synchronized (tasks)
 		{
 			tasks.add(e);
+			notify();
 		}	
 	}
 	/**

@@ -118,7 +118,6 @@ public class PriorityQueue
 			}
 		}	
 	}
-	//TODO 顶层操作堆的函数，维护版本号，要notify apply者。
 	public void alter(String key,Integer value)
 	{
 		Element<String,Integer> temp=queue.alter(key, value);
@@ -144,6 +143,44 @@ public class PriorityQueue
 				Delete m=new Delete(new Content<>(rtn));
 				broadcast(m);
 				return rtn;
+			}
+		}
+	}
+	public void delete(Sender out)
+	{
+		synchronized (versionCtrl)
+		{
+			synchronized (tasks)
+			{
+				while(!tasks.isEmpty())
+				{	
+					@SuppressWarnings("unchecked")
+					Element<String,Integer> e=(Element<String, Integer>) tasks.get();
+					int level=queue.apply(e);
+					versionCtrl.update(queue.getHeight(), level);
+				}
+				Element<String,Integer> rtn=queue.deleteMax();
+				if(versionCtrl.update(queue.getHeight(),0))
+					versionCtrl.notify();
+				Delete m=new Delete(new Content<>(rtn));
+				synchronized (clients)
+				{
+					Iterator<Node> it=clients.iterator();
+					while(it.hasNext())
+					{
+						try
+						{
+							Sender to=it.next().to;
+							m.acquired=(to==out);
+							to.send(m);
+						}
+						catch (IOException e)
+						{
+							it.remove();
+							e.printStackTrace();
+						}
+					}
+				}
 			}
 		}
 	}
