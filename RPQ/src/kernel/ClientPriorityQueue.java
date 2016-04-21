@@ -95,7 +95,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public void insert(T e)
     {
-    	synchronized (elements)
+    	synchronized (this)
 		{		
 	    	table.add(e);
 	    	if(size==elements.length)
@@ -107,13 +107,21 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 		}
     }
     /**
+     * @param key the identifier
+     * @return true if the priority queue contains the element having the identifier "key"
+     */
+    public boolean contains(K key)
+    {
+    	return table.get(key)!=null;
+    }
+    /**
      * Change the proiroty of the element having the identifier "key".
      * @param key the identifier.
      * @param value the disierd value.
      */
     public void alter(K key,V value)
     {
-    	synchronized (elements)
+    	synchronized (this)
 		{
     		T temp=table.get(key);
     		if(temp==null)return;
@@ -136,7 +144,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public T getMax()
     {
-    	synchronized (elements)
+    	synchronized (this)
 		{
     		return size==0? null : elements[0];
 		}
@@ -147,7 +155,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public T deleteMax()
     {
-    	synchronized (elements)
+    	synchronized (this)
 		{
 	    	if(size==0)return null;
 	    	T rtn=elements[0];
@@ -165,7 +173,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public T get(K key)
     {
-    	synchronized (elements)
+    	synchronized (this)
 		{
     		return table.get(key);
 		}
@@ -177,7 +185,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public T remove(K key)
     {
-    	synchronized (elements)
+    	synchronized (this)
 		{
 	    	T rtn=table.get(key);
 	    	if(rtn==null)return null;

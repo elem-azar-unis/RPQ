@@ -13,6 +13,17 @@ public class Receiver
 	{
 		in=new ObjectInputStream(s.getInputStream());
 	}
+	public Receiver(ClientConnector c)
+	{
+		try
+		{
+			in=new ObjectInputStream(c.socket.getInputStream());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * used when reconnected
 	 * @param s the socket
@@ -30,6 +41,21 @@ public class Receiver
 				e.printStackTrace();
 			}
 		in=new ObjectInputStream(s.getInputStream());
+	}
+	/**
+	 * used when reconnected
+	 * @param c
+	 */
+	public void reset(ClientConnector c)
+	{
+		try
+		{
+			reset(c.socket);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	public void close()
 	{

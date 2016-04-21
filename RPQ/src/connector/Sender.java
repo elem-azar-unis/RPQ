@@ -13,6 +13,17 @@ public class Sender
 	{
 		out=new ObjectOutputStream(s.getOutputStream());
 	}
+	public Sender(ClientConnector c)
+	{
+		try
+		{
+			out=new ObjectOutputStream(c.socket.getOutputStream());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * used when reconnected
 	 * @param s the socket
@@ -30,6 +41,21 @@ public class Sender
 				e.printStackTrace();
 			}
 		out=new ObjectOutputStream(s.getOutputStream());
+	}
+	/**
+	 * used when reconnected
+	 * @param c
+	 */
+	public void reset(ClientConnector c) 
+	{
+		try
+		{
+			reset(c.socket);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	public void close()
 	{

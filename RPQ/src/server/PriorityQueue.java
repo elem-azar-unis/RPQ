@@ -11,7 +11,6 @@ import kernel.TaskQueue;
 import message.Content;
 import message.Delete;
 import message.Message;
-import message.Update;
 import connector.Sender;
 
 public class PriorityQueue
@@ -20,6 +19,8 @@ public class PriorityQueue
 	TaskQueue tasks=new TaskQueue();
 	VersionCtrl versionCtrl=new PlainVersionCtrl();
 	List<Node> clients=new LinkedList<Node>();
+	Applier applier=null;
+	Updater updater=null;
 	/**
 	 * 3 threads(priority): wait connection(5), updater(7), applier(3)
 	 * @param port the server port
@@ -27,10 +28,12 @@ public class PriorityQueue
 	public PriorityQueue(int port)
 	{
 		new Thread(new WaitConnection(port, this)).start();
-		Thread apl=new Thread(new Applier());
+		applier=new Applier(this);
+		Thread apl=new Thread(applier);
 		apl.setPriority(3);
 		apl.start();
-		Thread upd=new Thread(new Updater());
+		updater=new Updater(this);
+		Thread upd=new Thread(updater);
 		upd.setPriority(7);
 		upd.start();
 	}
@@ -59,64 +62,6 @@ public class PriorityQueue
 				}
 			}
 		}
-	}
-	/**
-	 * The thread's priority is 3.
-	 * Apply one change every time.
-	 */
-	class Applier implements Runnable
-	{
-
-		public void run()
-		{
-			try
-			{
-				while(true)
-				{
-					synchronized (tasks)
-					{					
-						while(tasks.isEmpty())
-							tasks.wait();
-						@SuppressWarnings("unchecked")
-						Element<String,Integer> e=(Element<String, Integer>) tasks.get();
-						int level=queue.apply(e);
-						if(versionCtrl.update(queue.getHeight(), level))
-							versionCtrl.notify();
-					}	
-				}
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-		}		
-	}
-	/**
-	 * The thread's priority is 7.
-	 * Update the change to each client.
-	 */
-	class Updater implements Runnable
-	{
-		public void run()
-		{
-			try
-			{
-				while(true)
-				{
-					synchronized (versionCtrl)
-					{
-						while(versionCtrl.tell()==0)
-							versionCtrl.wait();
-						broadcast(new Update(queue.getUpdate(versionCtrl.tell())));
-						versionCtrl.reset();
-					}
-				}
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-		}	
 	}
 	public void alter(String key,Integer value)
 	{
@@ -211,14 +156,5 @@ public class PriorityQueue
 		{
 			return queue.getMax(tasks);
 		}
-	}
-}
-
-class Node
-{
-	Sender to;
-	public Node(Sender t)
-	{
-		to=t;
 	}
 }

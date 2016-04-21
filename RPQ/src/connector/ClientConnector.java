@@ -38,7 +38,7 @@ public class ClientConnector
 	 * Connect or reconnect the server
 	 * @return the socket connected to the server
 	 */
-	public Socket connect()
+	public void connect()
 	{
 		run=true;
 		socket=null;
@@ -47,6 +47,7 @@ public class ClientConnector
 			try
 			{
 				socket=new Socket(ip,port);
+				break;
 			}
 			catch (IOException e)
 			{
@@ -60,6 +61,5 @@ public class ClientConnector
 				}
 			}
 		}
-		return socket;
 	}
 }

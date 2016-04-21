@@ -3,7 +3,7 @@ package server;
 import java.net.Socket;
 import connector.ServerConnector;
 
-public class WaitConnection implements Runnable
+class WaitConnection implements Runnable
 {
 	ServerConnector server=null;
 	PriorityQueue spq=null;

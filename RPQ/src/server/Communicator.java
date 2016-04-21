@@ -13,7 +13,7 @@ import message.Message;
 import connector.Receiver;
 import connector.Sender;
 
-public class Communicator implements Runnable
+class Communicator implements Runnable
 {
 	PriorityQueue spq=null;
 	Receiver in=null;
