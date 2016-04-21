@@ -1,5 +1,6 @@
 package client;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -10,11 +11,10 @@ import message.Message;
 class Updater implements Runnable
 {
 	Queue<Message> messages=new LinkedList<Message>();
-	PriorityQueue cpq=null;
 	Sender to=null;
+	boolean reseted=false;
 	public Updater(PriorityQueue cpq)
 	{
-		this.cpq=cpq;
 		to=new Sender(cpq.conn);
 	}
 	public void add(Message m)
@@ -30,13 +30,47 @@ class Updater implements Runnable
 		synchronized (to)
 		{
 			to.reset(c);
+			reseted=true;
 			to.notify();
 		}	
 	}
-	@Override
 	public void run()
 	{
-		// TODO 自动生成的方法存根
-		
+		while(true)
+		{
+			try
+			{
+				while(true)
+				{
+					synchronized (messages)
+					{
+						while (messages.isEmpty())
+							messages.wait();
+						to.send(messages.peek());
+						messages.remove();
+					}
+				}
+			}
+			catch (IOException e)
+			{
+				synchronized (to)
+				{
+					try
+					{
+						while(!reseted)	
+							to.wait();
+					}
+					catch (InterruptedException e1)
+					{
+						e1.printStackTrace();
+					}
+					reseted=false;
+				}
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 }

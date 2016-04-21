@@ -56,8 +56,11 @@ public class PriorityQueue
 			updater.add(new Delete(null));
 			try
 			{
-				while (deleteReply==null)				
-					deleteReply.wait();
+				if (deleteReply==null)				
+					deleteReply.wait(30000);
+				//timeout
+				if (deleteReply==null)
+					return null;
 			}
 			catch (InterruptedException e)
 			{
