@@ -3,8 +3,11 @@ package client;
 import java.io.IOException;
 
 import kernel.Element;
+import message.Alter;
 import message.Content;
 import message.Delete;
+import message.Insert;
+import message.Max;
 import message.Message;
 import message.Update;
 import connector.ClientConnector;
@@ -44,6 +47,26 @@ class Communicator implements Runnable
 							delete((Delete) m);
 							break;
 						}
+						case Message.ACK :
+						{
+							ack();
+							break;
+						}
+						case Message.ALTER :
+						{
+							alter((Alter) m);
+							break;
+						}
+						case Message.INSERT :
+						{
+							insert((Insert) m);
+							break;
+						}
+						case Message.MAX :
+						{
+							max((Max) m);
+							break;
+						}
 						default :
 							break;
 					}
@@ -78,15 +101,41 @@ class Communicator implements Runnable
 	{
 		if(m.acquired)
 		{
-			synchronized (cpq.deleteReply)
+			synchronized (cpq.reply)
 			{
-				cpq.deleteReply=(Content<String, Integer>) m.content;
-				cpq.deleteReply.notify();
+				cpq.reply=(Content<String, Integer>) m.content;
+				cpq.reply.notify();
 			}
 		}
 		else
 		{
 			cpq.queue.remove((String) m.content.key);
+		}
+	}
+	private void ack()
+	{
+		synchronized (cpq.replied)
+		{
+			cpq.replied=true;
+			cpq.replied.notify();
+		}
+	}
+	private void alter(Alter m)
+	{
+		cpq.alter((String)m.content.key, (Integer)m.content.value);
+	}
+	@SuppressWarnings("unchecked")
+	private void insert(Insert m)
+	{
+		cpq.insert((Element<String, Integer>) m.elememt);
+	}
+	@SuppressWarnings("unchecked")
+	private void max(Max m)
+	{
+		synchronized (cpq.reply)
+		{
+			cpq.reply=(Content<String, Integer>) m.content;
+			cpq.reply.notify();
 		}
 	}
 }
