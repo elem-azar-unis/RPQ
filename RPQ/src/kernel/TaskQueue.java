@@ -5,11 +5,11 @@ import java.util.HashSet;
 
 
 /**
- * Synchronized. Used by server. It is a set of the elememt changed but not applied.
+ * Synchronized. Used by server. It is a set of the element changed but not applied.
  */
 public class TaskQueue
 {
-	Collection<Element<?,?>> tasks=(new HashSet<Element<?,?>>());
+	final Collection<Element<?,?>> tasks=(new HashSet<Element<?,?>>());
 	public boolean isEmpty()
 	{
 		synchronized (tasks)
@@ -19,7 +19,7 @@ public class TaskQueue
 	}
 	/**
 	 * @param e the element
-	 * @return if the element is in the taskqueue.
+	 * @return if the element is in the task queue.
 	 */
 	public boolean has(Element<?,?> e)
 	{

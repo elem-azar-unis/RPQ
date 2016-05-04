@@ -5,9 +5,9 @@ import connector.ServerConnector;
 
 class WaitConnection implements Runnable
 {
-	ServerConnector server=null;
-	PriorityQueue spq=null;
-	public WaitConnection(int port,PriorityQueue pq)
+	private ServerConnector server=null;
+	private PriorityQueue spq=null;
+	WaitConnection(int port, PriorityQueue pq)
 	{
 		server=new ServerConnector(port);
 		spq=pq;

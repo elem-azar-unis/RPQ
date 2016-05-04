@@ -4,9 +4,9 @@ package server;
  * Update the RPQ when the root of the RPQ is affected.
  * Only update the root.
  */
-public class PlainVersionCtrl implements VersionCtrl
+public class RootVersionCtrl implements VersionCtrl
 {
-	boolean root=false;
+	private boolean root=false;
 	public boolean update(int size, int level)
 	{
 		root=(level==0);

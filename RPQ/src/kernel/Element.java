@@ -12,7 +12,7 @@ import java.io.Serializable;
  * <p>Each element has its priority, the type of which should have implemented {@link Comparable}.
  * 
  * @param <K> Type of the identifier.
- * @param <T> The type of the priority of this element. It should've implemented {@link Comparable}.
+ * @param <V> The type of the priority of this element. It should've implemented {@link Comparable}.
  */
 public class Element<K,V extends Comparable<V>> implements Comparable<Element<?,?>>, Serializable
 {

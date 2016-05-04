@@ -8,8 +8,8 @@ import kernel.Element;
  */
 class Applier implements Runnable
 {
-	PriorityQueue spq;
-	public Applier(PriorityQueue spq)
+	private PriorityQueue spq;
+	Applier(PriorityQueue spq)
 	{
 		this.spq=spq;
 	}

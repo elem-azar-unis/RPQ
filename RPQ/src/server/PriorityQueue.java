@@ -16,11 +16,10 @@ import connector.Sender;
 public class PriorityQueue
 {
 	ServerPriorityQueue<String,Integer, Element<String,Integer>> queue=new ServerPriorityQueue<>();
-	TaskQueue tasks=new TaskQueue();
-	VersionCtrl versionCtrl=new PlainVersionCtrl();
-	List<Node> clients=new LinkedList<Node>();
-	Applier applier=null;
-	Updater updater=null;
+	final TaskQueue tasks=new TaskQueue();
+	final VersionCtrl versionCtrl=new LinearVersionCtrl(4);
+	private final List<Node> clients= new LinkedList<>();
+
 	/**
 	 * 3 threads(priority): wait connection(5), updater(7), applier(3)
 	 * @param port the server port
@@ -28,11 +27,11 @@ public class PriorityQueue
 	public PriorityQueue(int port)
 	{
 		new Thread(new WaitConnection(port, this)).start();
-		applier=new Applier(this);
+		Applier applier = new Applier(this);
 		Thread apl=new Thread(applier);
 		apl.setPriority(3);
 		apl.start();
-		updater=new Updater(this);
+		Updater updater = new Updater(this);
 		Thread upd=new Thread(updater);
 		upd.setPriority(7);
 		upd.start();

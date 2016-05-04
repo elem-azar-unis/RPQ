@@ -8,8 +8,8 @@ import message.Update;
  */
 class Updater implements Runnable
 {
-	PriorityQueue spq;
-	public Updater(PriorityQueue spq)
+	private PriorityQueue spq;
+	Updater(PriorityQueue spq)
 	{
 		this.spq=spq;
 	}

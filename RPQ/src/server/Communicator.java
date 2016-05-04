@@ -5,26 +5,27 @@ import java.net.Socket;
 
 import kernel.Element;
 import message.Alter;
-import message.Delete;
 import message.Delta;
 import message.Insert;
 import message.Max;
 import message.Message;
+import message.Update;
 import connector.Receiver;
 import connector.Sender;
 
 class Communicator implements Runnable
 {
-	PriorityQueue spq=null;
-	Receiver in=null;
-	Sender out=null;
-	public Communicator(Socket socket,PriorityQueue pq)
+	private PriorityQueue spq=null;
+	private Receiver in=null;
+	private Sender out=null;
+	Communicator(Socket socket, PriorityQueue pq)
 	{
 		try
 		{
 			spq=pq;
 			in=new Receiver(socket);
 			out=new Sender(socket);
+			out.send(new Update(spq.queue.getUpdate(spq.versionCtrl.tell())));		
 			spq.addClient(new Node(out));
 		}
 		catch (IOException e)
@@ -48,7 +49,7 @@ class Communicator implements Runnable
 					}						
 					case Message.DELETE:
 					{	
-						delete((Delete) m);
+						delete();
 						break;
 					}
 					case Message.DELTA:
@@ -63,7 +64,7 @@ class Communicator implements Runnable
 					}
 					case Message.MAX:
 					{
-						max((Max) m);
+						max();
 						break;
 					}
 					default :
@@ -80,7 +81,7 @@ class Communicator implements Runnable
 	{
 		spq.alter((String)m.content.key, (Integer)m.content.value);
 	}
-	private void delete(Delete m)
+	private void delete()
 	{
 		spq.delete(out);
 	}
@@ -93,7 +94,7 @@ class Communicator implements Runnable
 	{
 		spq.insert((Element<String, Integer>) m.elememt);
 	}
-	private void max(Max m) throws IOException
+	private void max() throws IOException
 	{
 		Max max=new Max(spq.max());
 		out.send(max);

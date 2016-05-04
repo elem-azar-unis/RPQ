@@ -10,7 +10,7 @@ import java.util.Hashtable;
  */
 class ElementTable<K,V extends Element<K,?>>
 {
-	private Hashtable<K,V> table=new Hashtable<K,V>();
+	private Hashtable<K,V> table= new Hashtable<>();
 	/**
 	 * Maps the <code>key</code> of the <code>element</code> to the element
      * in this table. The element can't be <code>null</code>. <p>

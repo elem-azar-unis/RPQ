@@ -8,15 +8,15 @@ import message.Content;
 /**
  * The kernel priority queue for server. It uses ElementTable to find an element in constant time.
  * 
- * <p>This is an unbounded priority queue based on heap. This is a maximam priority queue.
- * The priority is provided by user difined Comparable.
+ * <p>This is an unbounded priority queue based on heap. This is a maximum priority queue.
+ * The priority is provided by user defined Comparable.
  * 
  * <p>The basic operations: Insert, Alter, Delete max, Get max, Apply.
  * Insert, Delete max, Apply are synchronized on the queue.
  * 
  * <p>Insert and alter don't take immediate effect. They have two steps. 
- * First is to update the desierd value. 
- * Then, apply this deiserd value and fix the heap.
+ * First is to update the desired value.
+ * Then, apply this desired value and fix the heap.
  * This is efficient when multiple writes on the same element within a short period.
  * It also make a response in a constant time. Only applying is time consuming.
  * 
@@ -27,14 +27,14 @@ import message.Content;
  */
 public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V>>
 {
-	class Node
+	private class Node
 	{
 		T element;
 		/**
 		 * Used only by the server RPQ. The change of the priority that is to be applied in the future.
 		 */
 		V desired=null;
-		public Node(T element){this.element=element;}
+		Node(T element){this.element=element;}
 	}
 	private static final int INITIAL_CAPACITY=8;
 	/**
@@ -55,7 +55,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     /**
      * The hash table of the element.
      */
-    private ElementTable<K,T> table=new ElementTable<K,T>();
+    private ElementTable<K,T> table= new ElementTable<>();
     /**
      * @return The height of the priority queue
      */
@@ -139,10 +139,10 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 		}
     }
     /**
-     * Change the proiroty of the element having the identifier "key".
+     * Change the priority of the element having the identifier "key".
      * You need to  apply it for the alter to take place.
      * @param key the identifier.
-     * @param value the disierd value.
+     * @param value the desired value.
      * @return The element
      */
     public T alter(K key,V value)
@@ -222,7 +222,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 		}
     }
     /**
-     * Write the desierd priority.
+     * Write the desired priority.
      * @return The highest affected level.
      * @param tar the element to be changed.
      */
@@ -265,6 +265,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     	ArrayList<Content<?, ?>> lst=new ArrayList<>(n);
     	synchronized (elements)
 		{
+    		n=n>size? size:n;
 			for(int i=0;i<n;i++)
 				lst.add(new Content<K,V>(elements[i].element));
 		}
