@@ -5,8 +5,8 @@ import java.net.Socket;
 
 public class ClientConnector
 {
-	String ip;
-	int port;
+	private String ip;
+	private int port;
 	Socket socket=null;
 	/**
 	 * continue to run
@@ -36,7 +36,6 @@ public class ClientConnector
 	}
 	/**
 	 * Connect or reconnect the server
-	 * @return the socket connected to the server
 	 */
 	public void connect()
 	{

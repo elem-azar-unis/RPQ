@@ -12,16 +12,17 @@ import connector.ClientConnector;
 
 public class PriorityQueue
 {
-	KernelPriorityQueue<String, Integer, Element<String,Integer>> queue=new KernelPriorityQueue<>();
+	final KernelPriorityQueue<String, Integer, Element<String,Integer>> queue=new KernelPriorityQueue<>();
 	ClientConnector conn=null;
-	Communicator communicator=null;
-	Updater updater=null;
+	private Communicator communicator=null;
+	private Updater updater=null;
 	Content<String, Integer> reply=null;
 	Boolean replied=false;
+	final Boolean replyLock=true;
 	/**
 	 * need the IP address and the port number of the server priority queue.
-	 * @param ip
-	 * @param port
+	 * @param ip ip
+	 * @param port port
 	 */
 	public PriorityQueue(String ip,int port)
 	{
@@ -37,22 +38,6 @@ public class PriorityQueue
 		communicator.reset(conn);
 		updater.reset(conn);
 	}
-	void setReply(Content<String, Integer> c)
-	{
-		synchronized (reply)
-		{
-			reply=c;
-			reply.notify();
-		}
-	}
-	void serReplied()
-	{
-		synchronized (replied)
-		{
-			replied=true;
-			replied.notify();
-		}
-	}
 	public void alter(String key,Integer value)
 	{
 		updater.send(new Alter(new Content<>(key, value)));
@@ -61,12 +46,12 @@ public class PriorityQueue
 	}
 	private void wait_for_replied()
 	{
-		synchronized (replied)
+		synchronized (replyLock)
 		{
 			try
 			{
-				while (!replied)				
-					replied.wait();
+				while (!replied)
+					replyLock.wait();
 				replied=false;
 			}
 			catch (InterruptedException e)
@@ -77,13 +62,13 @@ public class PriorityQueue
 	}
 	public Element<String, Integer> delete()
 	{
-		synchronized (reply)
+		synchronized (replyLock)
 		{
 			updater.send(new Delete(null));
 			try
 			{
-				while (reply==null)				
-					reply.wait();
+				while (reply==null)
+					replyLock.wait();
 			}
 			catch (InterruptedException e)
 			{
@@ -113,13 +98,13 @@ public class PriorityQueue
 	}
 	public Element<String, Integer> max()
 	{
-		synchronized (reply)
+		synchronized (replyLock)
 		{
 			updater.send(new Max(null));
 			try
 			{
-				while (reply==null)				
-					reply.wait();
+				while (reply==null)
+					replyLock.wait();
 			}
 			catch (InterruptedException e)
 			{

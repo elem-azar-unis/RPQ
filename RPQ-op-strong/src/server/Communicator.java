@@ -15,10 +15,10 @@ import connector.Sender;
 
 class Communicator implements Runnable
 {
-	PriorityQueue spq=null;
-	Receiver in=null;
-	Sender out=null;
-	public Communicator(Socket socket,PriorityQueue pq)
+	private PriorityQueue spq=null;
+	private Receiver in=null;
+	private Sender out=null;
+	Communicator(Socket socket, PriorityQueue pq)
 	{
 		try
 		{
@@ -69,6 +69,7 @@ class Communicator implements Runnable
 					default :
 						break;
 				}
+				spq.increaseCount();
 			}
 		}
 		catch (ClassNotFoundException | IOException e)
@@ -91,7 +92,7 @@ class Communicator implements Runnable
 	@SuppressWarnings("unchecked")
 	private void insert(Insert m)
 	{
-		spq.insert((Element<String, Integer>) m.elememt,out);
+		spq.insert((Element<String, Integer>) m.element,out);
 	}
 	private void max(Max m) throws IOException
 	{

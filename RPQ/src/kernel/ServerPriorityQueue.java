@@ -123,7 +123,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public void insert(T e)
     {
-    	synchronized (elements)
+    	synchronized (this)
 		{
 	    	table.add(e);
 	    	if(size==elements.length)
@@ -210,7 +210,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public T deleteMax()
     {
-    	synchronized (elements)
+    	synchronized (this)
 		{
 	    	if(size==0)return null;
 	    	T rtn=elements[0].element;
@@ -228,7 +228,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public int apply(T tar)
     {
-    	synchronized (elements)
+    	synchronized (this)
 		{
 	    	int index=tar.index;
 	    	V pre=tar.priority;
@@ -263,7 +263,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     {
     	int n=(int)Math.pow(2,l)-1;
     	ArrayList<Content<?, ?>> lst=new ArrayList<>(n);
-    	synchronized (elements)
+    	synchronized (this)
 		{
     		n=n>size? size:n;
 			for(int i=0;i<n;i++)
@@ -278,7 +278,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public T remove(K key)
     {
-    	synchronized (elements)
+    	synchronized (this)
 		{
 	    	T rtn=table.get(key);
 	    	if(rtn==null) return null;

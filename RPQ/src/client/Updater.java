@@ -10,14 +10,14 @@ import message.Message;
 
 class Updater implements Runnable
 {
-	Queue<Message> messages=new LinkedList<Message>();
-	Sender to=null;
-	boolean reseted=false;
-	public Updater(PriorityQueue cpq)
+	private final Queue<Message> messages= new LinkedList<>();
+	private Sender to=null;
+	private boolean rested =false;
+	Updater(PriorityQueue cpq)
 	{
 		to=new Sender(cpq.conn);
 	}
-	public void add(Message m)
+	void add(Message m)
 	{
 		synchronized (messages)
 		{
@@ -30,7 +30,7 @@ class Updater implements Runnable
 		synchronized (to)
 		{
 			to.reset(c);
-			reseted=true;
+			rested =true;
 			to.notify();
 		}	
 	}
@@ -57,14 +57,14 @@ class Updater implements Runnable
 				{
 					try
 					{
-						while(!reseted)	
+						while(!rested)
 							to.wait();
 					}
 					catch (InterruptedException e1)
 					{
 						e1.printStackTrace();
 					}
-					reseted=false;
+					rested =false;
 				}
 			}
 			catch (InterruptedException e)

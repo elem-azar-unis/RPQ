@@ -1,5 +1,8 @@
 package kernel;
 
+import message.Content;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -37,7 +40,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     /**
      * The hash table of the element.
      */
-    private ElementTable<K,T> table=new ElementTable<K,T>();
+    private ElementTable<K,T> table= new ElementTable<>();
     /**
      * Increases the capacity by doubling it.
      */
@@ -115,9 +118,9 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     	return table.get(key)!=null;
     }
     /**
-     * Change the proiroty of the element having the identifier "key".
+     * Change the priority of the element having the identifier "key".
      * @param key the identifier.
-     * @param value the disierd value.
+     * @param value the desired value.
      */
     public void alter(K key,V value)
     {
@@ -178,6 +181,23 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     		return table.get(key);
 		}
     }
+	/**
+	 * Get the level 0 to level l to update.
+	 * @param l the upper level
+	 * @return an list of the update information
+	 */
+	public ArrayList<Content<?, ?>> getUpdate(int l)
+	{
+		int n=(int)Math.pow(2,l)-1;
+		ArrayList<Content<?, ?>> lst=new ArrayList<>(n);
+		synchronized (this)
+		{
+			n=n>size? size:n;
+			for(int i=0;i<n;i++)
+				lst.add(new Content<K,V>(elements[i]));
+		}
+		return lst;
+	}
     /**
      * remove the element having the identifier "key"
      * @param key The identifier
@@ -200,4 +220,9 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 	    	return rtn;
 		}
     }
+
+	public int getSize()
+	{
+		return size;
+	}
 }

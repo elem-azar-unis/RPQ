@@ -8,22 +8,22 @@ import connector.Sender;
 
 class Updater
 {
-	Sender to=null;
-	boolean reseted=false;
-	public Updater(PriorityQueue cpq)
+	private Sender to=null;
+	private boolean rested =false;
+	Updater(PriorityQueue cpq)
 	{
 		to=new Sender(cpq.conn);
 	}
-	public void reset(ClientConnector c)
+	void reset(ClientConnector c)
 	{
 		synchronized (to)
 		{
 			to.reset(c);
-			reseted=true;
+			rested =true;
 			to.notify();
 		}	
 	}
-	public void send(Message m)
+	void send(Message m)
 	{
 		while(true)
 		{
@@ -38,14 +38,14 @@ class Updater
 				{
 					try
 					{
-						while(!reseted)	
+						while(!rested)
 							to.wait();
 					}
 					catch (InterruptedException e1)
 					{
 						e1.printStackTrace();
 					}
-					reseted=false;
+					rested =false;
 				}
 			}
 		}

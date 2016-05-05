@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class ServerConnector
 {
-	ServerSocket server=null;
+	private ServerSocket server=null;
 	/**
 	 * @param port The port of the server
 	 */

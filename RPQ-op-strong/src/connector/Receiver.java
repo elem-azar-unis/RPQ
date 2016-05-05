@@ -44,7 +44,7 @@ public class Receiver
 	}
 	/**
 	 * used when reconnected
-	 * @param c
+	 * @param c ClientConnector
 	 */
 	public void reset(ClientConnector c)
 	{

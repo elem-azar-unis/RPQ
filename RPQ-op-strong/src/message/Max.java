@@ -1,7 +1,7 @@
 package message;
 
 /**
- * Sent from server means an anser. (Sent from client means a request.)
+ * Sent from server means an answer. (Sent from client means a request.)
  */
 public class Max extends Message
 {

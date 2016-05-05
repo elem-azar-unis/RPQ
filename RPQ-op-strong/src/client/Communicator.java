@@ -15,14 +15,14 @@ import connector.Receiver;
 
 class Communicator implements Runnable
 {
-	PriorityQueue cpq=null;
-	Receiver in=null;
-	public Communicator(PriorityQueue cpq)
+	private PriorityQueue cpq=null;
+	private Receiver in=null;
+	Communicator(PriorityQueue cpq)
 	{
 		this.cpq=cpq;
 		in=new Receiver(cpq.conn);
 	}
-	public void reset(ClientConnector c)
+	void reset(ClientConnector c)
 	{
 		in.reset(c);
 	}
@@ -92,7 +92,7 @@ class Communicator implements Runnable
 			}
 			else 
 			{
-				cpq.queue.insert(new Element<String, Integer>((String) content.key,(Integer) content.value));
+				cpq.queue.insert(new Element<>((String) content.key, (Integer) content.value));
 			}
 		}
 	}
@@ -101,10 +101,10 @@ class Communicator implements Runnable
 	{
 		if(m.acquired)
 		{
-			synchronized (cpq.reply)
+			synchronized (cpq.replyLock)
 			{
 				cpq.reply=(Content<String, Integer>) m.content;
-				cpq.reply.notify();
+				cpq.replyLock.notify();
 			}
 		}
 		else
@@ -114,10 +114,10 @@ class Communicator implements Runnable
 	}
 	private void ack()
 	{
-		synchronized (cpq.replied)
+		synchronized (cpq.replyLock)
 		{
 			cpq.replied=true;
-			cpq.replied.notify();
+			cpq.replyLock.notify();
 		}
 	}
 	private void alter(Alter m)
@@ -127,15 +127,15 @@ class Communicator implements Runnable
 	@SuppressWarnings("unchecked")
 	private void insert(Insert m)
 	{
-		cpq.insert((Element<String, Integer>) m.elememt);
+		cpq.insert((Element<String, Integer>) m.element);
 	}
 	@SuppressWarnings("unchecked")
 	private void max(Max m)
 	{
-		synchronized (cpq.reply)
+		synchronized (cpq.replyLock)
 		{
 			cpq.reply=(Content<String, Integer>) m.content;
-			cpq.reply.notify();
+			cpq.replyLock.notify();
 		}
 	}
 }

@@ -9,7 +9,7 @@ import java.util.HashSet;
  */
 public class TaskQueue
 {
-	final Collection<Element<?,?>> tasks=(new HashSet<Element<?,?>>());
+	final Collection<Element<?,?>> tasks=(new HashSet<>());
 	public boolean isEmpty()
 	{
 		synchronized (tasks)

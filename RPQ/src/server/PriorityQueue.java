@@ -1,6 +1,7 @@
 package server;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +20,26 @@ public class PriorityQueue
 	final TaskQueue tasks=new TaskQueue();
 	final VersionCtrl versionCtrl=new LinearVersionCtrl(4);
 	private final List<Node> clients= new LinkedList<>();
-
+	private int count=0;
+	private final Boolean count_lock=true;
+	void increaseCount()
+	{
+		synchronized (count_lock)
+		{
+			count++;
+		}
+	}
+	public int getCount()
+	{
+		return count;
+	}
+	public ArrayList<Content<?, ?>> getK()
+	{
+		int i=queue.getSize();
+		double h=Math.log((double)i)/Math.log(2.0);
+		i=Math.min((int) Math.sqrt(h),5);
+		return queue.getUpdate(i);
+	}
 	/**
 	 * 3 threads(priority): wait connection(5), updater(7), applier(3)
 	 * @param port the server port

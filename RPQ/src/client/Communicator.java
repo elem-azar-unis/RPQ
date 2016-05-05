@@ -12,14 +12,14 @@ import connector.Receiver;
 
 class Communicator implements Runnable
 {
-	PriorityQueue cpq=null;
-	Receiver in=null;
-	public Communicator(PriorityQueue cpq)
+	private PriorityQueue cpq=null;
+	private Receiver in=null;
+	Communicator(PriorityQueue cpq)
 	{
 		this.cpq=cpq;
 		in=new Receiver(cpq.conn);
 	}
-	public void reset(ClientConnector c)
+	void reset(ClientConnector c)
 	{
 		in.reset(c);
 	}
@@ -69,7 +69,7 @@ class Communicator implements Runnable
 			}
 			else 
 			{
-				cpq.queue.insert(new Element<String, Integer>((String) content.key,(Integer) content.value));
+				cpq.queue.insert(new Element<>((String) content.key, (Integer) content.value));
 			}
 		}
 	}
@@ -78,10 +78,10 @@ class Communicator implements Runnable
 	{
 		if(m.acquired)
 		{
-			synchronized (cpq.deleteReply)
+			synchronized (cpq.deleteReplyLock)
 			{
 				cpq.deleteReply=(Content<String, Integer>) m.content;
-				cpq.deleteReply.notify();
+				cpq.deleteReplyLock.notify();
 			}
 		}
 		else

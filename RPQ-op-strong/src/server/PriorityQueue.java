@@ -17,8 +17,21 @@ import connector.Sender;
 
 public class PriorityQueue
 {
-	KernelPriorityQueue<String,Integer, Element<String,Integer>> queue=new KernelPriorityQueue<>();
-	List<Node> clients=new LinkedList<Node>();
+	private final KernelPriorityQueue<String,Integer, Element<String,Integer>> queue=new KernelPriorityQueue<>();
+	private final List<Node> clients = new LinkedList<>();
+	private int count=0;
+	private final Boolean countLock=true;
+	void increaseCount()
+	{
+		synchronized (countLock)
+		{
+			count++;
+		}
+	}
+	public int getCount()
+	{
+		return count;
+	}
 	/**
 	 * 3 threads(priority): wait connection(5), updater(7), applier(3)
 	 * @param port the server port
@@ -34,7 +47,7 @@ public class PriorityQueue
 			clients.add(n);
 		}
 	}
-	void broadcast(Sender out,Message m)
+	private void broadcast(Sender out, Message m)
 	{
 		Iterator<Node> it=clients.iterator();
 		while(it.hasNext())
@@ -59,7 +72,7 @@ public class PriorityQueue
 		synchronized (clients)
 		{
 			queue.alter(key, value);
-			broadcast(to,new Alter(new Content<String, Integer>(key, value)));
+			broadcast(to,new Alter(new Content<>(key, value)));
 		}
 	}
 	public Element<String,Integer> delete()
@@ -120,7 +133,7 @@ public class PriorityQueue
 				k=queue.get(key).priority+d;
 				queue.alter(key, k);
 			}
-			broadcast(to,new Alter(new Content<String, Integer>(key, k)));
+			broadcast(to,new Alter(new Content<>(key, k)));
 		}
 	}
 	public void insert(Element<String,Integer> e,Sender to)

@@ -9,8 +9,8 @@ import message.Content;
  * Synchronized on the queue.
  * The kernel priority queue for client. It uses ElementTable to find an element in constant time.
  * 
- * <p>This is an unbounded priority queue based on heap. This is a maximam priority queue.
- * The priority is provided by user difined Comparable.
+ * <p>This is an unbounded priority queue based on heap. This is a maximum priority queue.
+ * The priority is provided by user defined Comparable.
  * 
  * <p>The basic operations: Insert, Alter, Delete max, Get max
  * 
@@ -40,7 +40,7 @@ public class KernelPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     /**
      * The hash table of the element.
      */
-    private ElementTable<K,T> table=new ElementTable<K,T>();
+    private ElementTable<K,T> table= new ElementTable<>();
     /**
      * Increases the capacity by doubling it.
      */
@@ -118,9 +118,9 @@ public class KernelPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     	return table.get(key)!=null;
     }
     /**
-     * Change the proiroty of the element having the identifier "key".
+     * Change the priority of the element having the identifier "key".
      * @param key the identifier.
-     * @param value the disierd value.
+     * @param value the desired value.
      */
     public void alter(K key,V value)
     {
@@ -210,7 +210,7 @@ public class KernelPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     	synchronized (this)
 		{
 			for(int i=0;i<n;i++)
-				lst.add(new Content<K,V>(elements[i]));
+				lst.add(new Content<>(elements[i]));
 		}
     	return lst;
 	}

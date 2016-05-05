@@ -9,17 +9,20 @@ import message.Delta;
 import message.Insert;
 import connector.ClientConnector;
 
+import java.util.ArrayList;
+
 public class PriorityQueue
 {
-	ClientPriorityQueue<String, Integer, Element<String,Integer>> queue=new ClientPriorityQueue<>();
+	final ClientPriorityQueue<String, Integer, Element<String,Integer>> queue=new ClientPriorityQueue<>();
 	ClientConnector conn=null;
-	Communicator communicator=null;
-	Updater updater=null;
+	private Communicator communicator=null;
+	private Updater updater=null;
 	Content<String, Integer> deleteReply=null;
+	final Boolean deleteReplyLock=true;
 	/**
 	 * need the IP address and the port number of the server priority queue.
-	 * @param ip
-	 * @param port
+	 * @param ip IP
+	 * @param port port
 	 */
 	public PriorityQueue(String ip,int port)
 	{
@@ -30,6 +33,13 @@ public class PriorityQueue
 		updater=new Updater(this);
 		new Thread(updater).run();
 	}
+	public ArrayList<Content<?, ?>> getK()
+	{
+		int i=queue.getSize();
+		double h=Math.log((double)i)/Math.log(2.0);
+		i=Math.min((int) Math.sqrt(h),5);
+		return queue.getUpdate(i);
+	}
 	void reconnect()
 	{
 		conn.connect();
@@ -38,10 +48,10 @@ public class PriorityQueue
 	}
 	void setReply(Content<String, Integer> c)
 	{
-		synchronized (deleteReply)
+		synchronized (deleteReplyLock)
 		{
 			deleteReply=c;
-			deleteReply.notify();
+			deleteReplyLock.notify();
 		}
 	}
 	public void alter(String key,Integer value)
@@ -51,13 +61,13 @@ public class PriorityQueue
 	}
 	public Element<String, Integer> delete()
 	{
-		synchronized (deleteReply)
+		synchronized (deleteReplyLock)
 		{
 			updater.add(new Delete(null));
 			try
 			{
-				if (deleteReply==null)				
-					deleteReply.wait(30000);
+				if (deleteReply==null)
+					deleteReplyLock.wait(30000);
 				//timeout
 				if (deleteReply==null)
 					return null;

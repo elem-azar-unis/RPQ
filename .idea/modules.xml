@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/RPQ-client/RPQ-client.iml" filepath="$PROJECT_DIR$/RPQ-client/RPQ-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/RPQ-op-strong/RPQ-op-strong.iml" filepath="$PROJECT_DIR$/RPQ-op-strong/RPQ-op-strong.iml" />
       <module fileurl="file://$PROJECT_DIR$/RPQ-server/RPQ-server.iml" filepath="$PROJECT_DIR$/RPQ-server/RPQ-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/utility/utility.iml" filepath="$PROJECT_DIR$/utility/utility.iml" />
     </modules>
   </component>
 </project>

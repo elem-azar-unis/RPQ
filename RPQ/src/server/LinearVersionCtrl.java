@@ -22,7 +22,7 @@ public class LinearVersionCtrl implements VersionCtrl
 		rate=r;
 	}
 	/**
-	 * k=sqrt(log2(size))
+	 * k=sqrt(log2(size)), up to 5 levels
 	 * threshold=k*rate+modification;
 	 * @see server.VersionCtrl#update(int, int)
 	 */
@@ -30,7 +30,8 @@ public class LinearVersionCtrl implements VersionCtrl
 	{
 		double h=Math.log((double)size)/Math.log(2.0);
 		k=(int) Math.sqrt(h);
-		threshold=k*rate+modification;
+		k=Math.min(k,5);
+		threshold=(int)Math.pow(k,2)*rate+modification;
 		if(level==0)
 			version+=threshold;
 		else if(level<=k)

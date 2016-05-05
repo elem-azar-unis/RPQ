@@ -70,6 +70,7 @@ class Communicator implements Runnable
 					default :
 						break;
 				}
+				spq.increaseCount();
 			}
 		}
 		catch (ClassNotFoundException | IOException e)
@@ -92,7 +93,7 @@ class Communicator implements Runnable
 	@SuppressWarnings("unchecked")
 	private void insert(Insert m)
 	{
-		spq.insert((Element<String, Integer>) m.elememt);
+		spq.insert((Element<String, Integer>) m.element);
 	}
 	private void max() throws IOException
 	{
