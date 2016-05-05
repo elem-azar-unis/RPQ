@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="RPQ:jar">
+    <output-path>$PROJECT_DIR$/RPQ-client/app/libs</output-path>
+    <root id="archive" name="RPQ.jar">
+      <element id="module-output" name="RPQ" />
+    </root>
+  </artifact>
+</component>
