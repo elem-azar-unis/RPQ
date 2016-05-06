@@ -100,4 +100,8 @@ public class PriorityQueue
 	{
 		return queue.getMax();
 	}
+	public int getSize()
+	{
+		return queue.getSize();
+	}
 }

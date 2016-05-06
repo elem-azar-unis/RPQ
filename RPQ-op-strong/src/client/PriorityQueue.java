@@ -116,4 +116,8 @@ public class PriorityQueue
 			return rtn;
 		}
 	}
+	public int getSize()
+	{
+		return queue.getSize();
+	}
 }

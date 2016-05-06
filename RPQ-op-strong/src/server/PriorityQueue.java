@@ -148,4 +148,8 @@ public class PriorityQueue
 	{
 		return new Content<>(queue.getMax());
 	}
+	public int getSize()
+	{
+		return queue.getSize();
+	}
 }

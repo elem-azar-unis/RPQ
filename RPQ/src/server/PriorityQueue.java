@@ -176,4 +176,8 @@ public class PriorityQueue
 			return queue.getMax(tasks);
 		}
 	}
+	public int getSize()
+	{
+		return queue.getSize();
+	}
 }
