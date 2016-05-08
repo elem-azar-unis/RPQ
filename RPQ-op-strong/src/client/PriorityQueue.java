@@ -116,6 +116,7 @@ public class PriorityQueue
 			return rtn;
 		}
 	}
+	public String getOne(int in){return queue.getOne(in);}
 	public int getSize()
 	{
 		return queue.getSize();

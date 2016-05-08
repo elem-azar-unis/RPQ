@@ -9,8 +9,8 @@ import java.util.Arrays;
  * Synchronized on the queue.
  * The kernel priority queue for client. It uses ElementTable to find an element in constant time.
  * 
- * <p>This is an unbounded priority queue based on heap. This is a maximam priority queue.
- * The priority is provided by user difined Comparable.
+ * <p>This is an unbounded priority queue based on heap. This is a maximum priority queue.
+ * The priority is provided by user defined Comparable.
  * 
  * <p>The basic operations: Insert, Alter, Delete max, Get max
  * 
@@ -194,7 +194,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 		{
 			n=n>size? size:n;
 			for(int i=0;i<n;i++)
-				lst.add(new Content<K,V>(elements[i]));
+				lst.add(new Content<>(elements[i]));
 		}
 		return lst;
 	}
@@ -221,6 +221,10 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 		}
     }
 
+	public K getOne(int in)
+	{
+		return elements[in%size].key;
+	}
 	public int getSize()
 	{
 		return size;

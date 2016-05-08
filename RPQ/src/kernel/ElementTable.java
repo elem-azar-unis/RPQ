@@ -26,7 +26,7 @@ class ElementTable<K,V extends Element<K,?>>
 	}
 	/**
 	 * Remove the element form the table.
-	 * This method does nothing if the key is not in the hashtable.
+	 * This method does nothing if the key is not in the hashTable.
 	 * @param element the element to be removed
 	 */
 	void remove(V element)

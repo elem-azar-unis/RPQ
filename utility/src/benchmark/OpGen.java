@@ -54,6 +54,8 @@ public class OpGen
             //delta
             operation.type=OperationType.DELTA;
             operation.value= (int) (random.nextGaussian()*maxD);
+            if(random.nextBoolean())
+                operation.value=-operation.value;
         }
         else
         {

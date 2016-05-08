@@ -222,6 +222,10 @@ public class KernelPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     	if(size==0)return -1;
     	return (int)(Math.log((double)size)/Math.log(2.0));
     }
+	public K getOne(int in)
+	{
+		return elements[in%size].key;
+	}
 	public int getSize()
 	{
 		return size;
