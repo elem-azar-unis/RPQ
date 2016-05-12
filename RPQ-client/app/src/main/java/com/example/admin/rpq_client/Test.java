@@ -18,7 +18,7 @@ import log.Logger;
  * 时间：2016/5/8.
  * 邮箱：cs_yqzhang@qq.com
  */
-public class Main
+public class Test
 {
 	private static final int log_count=2000;
 	private static final int interval=500;
@@ -51,7 +51,7 @@ public class Main
 		}
 	}
 
-	public Main(String ip,int port)
+	public Test(String ip, int port)
 	{
 		rpq=new PriorityQueue(ip,port);
 

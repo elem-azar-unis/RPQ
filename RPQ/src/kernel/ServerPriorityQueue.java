@@ -25,6 +25,7 @@ import message.Content;
  * @param <V> The type of value of priority.
  * @param <T> The type of element in the priority queue.
  */
+@SuppressWarnings("unchecked")
 public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V>>
 {
 	private class Node
@@ -43,9 +44,8 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      * priority queue is ordered by elements' decreasing ordering. 
      * For each node n in the heap and each descendant d of n, n >= d.  
      * The element with the highest value is in queue[0], assuming the queue is nonempty.
-     */	
-	@SuppressWarnings("unchecked")
-	private Node[] elements=(ServerPriorityQueue<K, V, T>.Node[]) new Object[INITIAL_CAPACITY];
+     */
+	private Object[] elements= new Object[INITIAL_CAPACITY];
 	/**
      * The size of the Priority Queue (the number of elements it contains).
      *
@@ -79,14 +79,14 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     private void shiftUP(int k)
     {
-    	Node e=elements[k];
+    	Node e= (Node) elements[k];
     	while(k>0)
     	{
     		int parent=(k-1)>>>1;
-    		if(e.element.compareTo(elements[parent].element)<=0)
+    		if(e.element.compareTo(((Node)elements[parent]).element)<=0)
     			break;
     		elements[k]=elements[parent];
-    		elements[k].element.index=k;
+			((Node)elements[k]).element.index=k;
     		k=parent;
     	}
     	elements[k]=e;
@@ -99,18 +99,18 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     private void shiftDown(int k)
     {
-    	Node e=elements[k];
+    	Node e= (Node) elements[k];
     	int half=size>>>1;            // loop while a non-leaf
     	while(k<half)
     	{
     		int child=(k<<1)+1;       // assume left child is largest
     		int right=child+1;
-    		if(right<size && elements[child].element.compareTo(elements[right].element)<0)
+    		if(right<size && ((Node)elements[child]).element.compareTo(((Node)elements[right]).element)<0)
     			child=right;
-    		if(e.element.compareTo(elements[child].element)>=0)
+    		if(e.element.compareTo(((Node)elements[child]).element)>=0)
     			break;
     		elements[k]=elements[child];
-    		elements[k].element.index=k;
+			((Node)elements[k]).element.index=k;
     		k=child;
     	}
     	elements[k]=e;
@@ -131,7 +131,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 	    	elements[size]=new Node(e);
 	    	synchronized (e)
 			{
-	    		elements[size].desired=e.priority;
+				((Node)elements[size]).desired=e.priority;
 		    	e.priority=null;
 		    	e.index=size;
 			}
@@ -152,7 +152,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     	int index=rtn.index;
     	synchronized (rtn)
 		{
-    		elements[index].desired=value;
+			((Node)elements[index]).desired=value;
 		}
     	return rtn;
     }
@@ -162,7 +162,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     public V getDesired(int index)
     {
-    	return elements[index].desired;
+    	return ((Node)elements[index]).desired;
     }
     /**
      * Get the element having the max priority.
@@ -172,12 +172,12 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     public Content<K,V> getMax(TaskQueue tasks)
     {
     	if(size==0)return null;
-    	if(tasks.isEmpty())return new Content<K,V>(elements[0].element); 
+    	if(tasks.isEmpty())return new Content<K,V>(((Node)elements[0]).element);
     	
     	int index=-1;
     	for(Element<?,?>e:tasks.tasks)
     	{
-    		if(index==-1 || elements[index].desired.compareTo(elements[e.index].desired)<0)
+    		if(index==-1 || ((Node)elements[index]).desired.compareTo(((Node)elements[e.index]).desired)<0)
     			index=e.index;
     	}
     	
@@ -188,19 +188,19 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     		boolean get=false;
     		for(int j=(int) Math.pow(2,i)-1;j<Math.max(size,Math.pow(2,i));j++)
     		{
-    			if(!tasks.has(elements[j].element))
+    			if(!tasks.has(((Node)elements[j]).element))
     			{
     				get=true;
-    				if (top==null || top.compareTo(elements[j].element)<0)
-    					top=elements[j].element;
+    				if (top==null || top.compareTo(((Node)elements[j]).element)<0)
+    					top=((Node)elements[j]).element;
     			}
     		}
     		if(get)break;
     	}
     	
-    	if(top==null)return new Content<K,V>(elements[index].element.key,elements[index].desired);
-    	return (top.priority.compareTo(elements[index].desired)<0)?
-    			new Content<K,V>(elements[index].element.key,elements[index].desired) : new Content<K,V>(top);
+    	if(top==null)return new Content<>(((Node)elements[index]).element.key, ((Node)elements[index]).desired);
+    	return (top.priority.compareTo(((Node)elements[index]).desired)<0)?
+    			new Content<K,V>(((Node)elements[index]).element.key,((Node)elements[index]).desired) : new Content<>(top);
     	/*return (elements[0].element.priority.compareTo(elements[index].desired)<0)?
     			elements[index].element : elements[0].element;*/
     }
@@ -213,7 +213,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     	synchronized (this)
 		{
 	    	if(size==0)return null;
-	    	T rtn=elements[0].element;
+	    	T rtn=((Node)elements[0]).element;
 	    	size--;
 	    	elements[0]=elements[size];
 	    	shiftDown(0);
@@ -234,8 +234,8 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 	    	V pre=tar.priority;
 	    	synchronized (tar)
 			{
-	    		tar.priority=elements[index].desired;
-		    	elements[index].desired=null;
+	    		tar.priority=((Node)elements[index]).desired;
+				((Node)elements[index]).desired=null;
 			}    	
 	    	if(pre==null || pre.compareTo(tar.priority)<0)
 	    		shiftUP(index);
@@ -267,7 +267,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 		{
     		n=n>size? size:n;
 			for(int i=0;i<n;i++)
-				lst.add(new Content<K,V>(elements[i].element));
+				lst.add(new Content<K,V>(((Node)elements[i]).element));
 		}
     	return lst;
     }
@@ -286,7 +286,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 	    	table.remove(rtn);
 	    	size--;
 	    	elements[index]=elements[size];
-	    	if(rtn.compareTo(elements[index].element)>0)
+	    	if(rtn.compareTo(((Node)elements[index]).element)>0)
 	    		shiftDown(index);
 	    	else
 				shiftUP(index);

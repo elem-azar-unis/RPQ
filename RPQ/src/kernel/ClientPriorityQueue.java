@@ -19,6 +19,7 @@ import java.util.Arrays;
  * @param <V> The type of value of priority.
  * @param <T> The type of element in the priority queue.
  */
+@SuppressWarnings("unchecked")
 public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V>>
 {
 	private static final int INITIAL_CAPACITY=8;
@@ -28,9 +29,8 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      * priority queue is ordered by elements' decreasing ordering. 
      * For each node n in the heap and each descendant d of n, n >= d.  
      * The element with the highest value is in queue[0], assuming the queue is nonempty.
-     */	
-	@SuppressWarnings("unchecked")
-	private T[] elements=(T[]) new Object[INITIAL_CAPACITY];
+     */
+	private Object[] elements= new Object[INITIAL_CAPACITY];
 	/**
      * The size of the Priority Queue (the number of elements it contains).
      *
@@ -55,14 +55,14 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     private void shiftUP(int k)
     {
-    	T e=elements[k];
+    	T e= (T) elements[k];
     	while(k>0)
     	{
     		int parent=(k-1)>>>1;
-    		if(e.compareTo(elements[parent])<=0)
+    		if(e.compareTo((T) elements[parent])<=0)
     			break;
     		elements[k]=elements[parent];
-    		elements[k].index=k;
+			((T)elements[k]).index=k;
     		k=parent;
     	}
     	elements[k]=e;
@@ -75,18 +75,18 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
      */
     private void shiftDown(int k)
     {
-    	T e=elements[k];
+    	T e= (T) elements[k];
     	int half=size>>>1;            // loop while a non-leaf
     	while(k<half)
     	{
     		int child=(k<<1)+1;       // assume left child is largest
     		int right=child+1;
-    		if(right<size && elements[child].compareTo(elements[right])<0)
+    		if(right<size && ((T)elements[child]).compareTo((T) elements[right])<0)
     			child=right;
-    		if(e.compareTo(elements[child])>=0)
+    		if(e.compareTo((T) elements[child])>=0)
     			break;
     		elements[k]=elements[child];
-    		elements[k].index=k;
+			((T)elements[k]).index=k;
     		k=child;
     	}
     	elements[k]=e;
@@ -129,14 +129,14 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     		T temp=table.get(key);
     		if(temp==null)return;
 	    	int index=temp.index;
-	    	if(elements[index].priority.compareTo(value)>0)
+	    	if(((T)elements[index]).priority.compareTo(value)>0)
 	    	{
-	    		elements[index].priority=value;
+				((T)elements[index]).priority=value;
 	    		shiftDown(index);
 	    	}
 	    	else
 	    	{
-	    		elements[index].priority=value;
+				((T)elements[index]).priority=value;
 	    		shiftUP(index);
 	    	}
 		}
@@ -149,7 +149,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     {
     	synchronized (this)
 		{
-    		return size==0? null : elements[0];
+    		return size==0? null : (T) elements[0];
 		}
     }
     /**
@@ -161,7 +161,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
     	synchronized (this)
 		{
 	    	if(size==0)return null;
-	    	T rtn=elements[0];
+	    	T rtn= (T) elements[0];
 	    	size--;
 	    	elements[0]=elements[size];
 	    	shiftDown(0);
@@ -194,7 +194,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 		{
 			n=n>size? size:n;
 			for(int i=0;i<n;i++)
-				lst.add(new Content<>(elements[i]));
+				lst.add(new Content<>((T) elements[i]));
 		}
 		return lst;
 	}
@@ -213,7 +213,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 	    	table.remove(rtn);
 	    	size--;
 	    	elements[index]=elements[size];
-	    	if(rtn.compareTo(elements[index])>0)
+	    	if(rtn.compareTo((T) elements[index])>0)
 	    		shiftDown(index);
 	    	else
 				shiftUP(index);
@@ -223,7 +223,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 
 	public K getOne(int in)
 	{
-		return elements[in%size].key;
+		return ((T)elements[in%size]).key;
 	}
 	public int getSize()
 	{

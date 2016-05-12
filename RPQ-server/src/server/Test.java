@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class Main
+public class Test
 {
     private PriorityQueue rpq;
     private FileOutputStream f_out;
@@ -19,7 +19,7 @@ public class Main
     private static final String logFile="RPQ_server.log";
     private static final boolean RPQ=true;
 
-    private Main() throws FileNotFoundException
+    private Test() throws FileNotFoundException
     {
         f_out =new FileOutputStream(logFile);
         if(RPQ)
@@ -44,7 +44,7 @@ public class Main
     }
     public static void main(String[] args) throws IOException, InterruptedException
     {
-        Main m=new Main();
+        Test m=new Test();
         Thread.sleep(5000);
         if (RPQ)
             m.test_RPQ();
