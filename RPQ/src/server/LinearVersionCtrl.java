@@ -35,7 +35,7 @@ public class LinearVersionCtrl implements VersionCtrl
 		if(level==0)
 			version+=threshold;
 		else if(level<=k)
-			version++;
+			version+=(k-level);
 		return version>=threshold;
 	}
 	public int tell()
