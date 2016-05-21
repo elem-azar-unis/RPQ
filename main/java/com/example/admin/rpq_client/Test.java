@@ -1,7 +1,6 @@
 package com.example.admin.rpq_client;
 
 import android.os.Environment;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,9 +20,9 @@ import log.Logger;
  */
 public class Test
 {
-	private static final int log_count=200;
-	private static final int interval=50;
-	private static final int op_interval=50;//50
+	private static final int log_count=2000;
+	private static final int interval=500;
+	private static final int op_interval=50;
 	private static final String logFile="RPQ_client.log";
 	private static final boolean RPQ=true;
 
@@ -31,8 +30,6 @@ public class Test
 	private OpGen gen=new OpGen();
 	private Logger log;
 	private Random r=new Random();
-
-	MainActivity ma;
 
 	private class logger implements Runnable
 	{
@@ -46,7 +43,6 @@ public class Test
 					log.add(rpq.getK());
 				}
 				log.flush_close();
-				Toast.makeText(ma, "完成",Toast.LENGTH_LONG ).show();
 			}
 			catch(InterruptedException e)
 			{
@@ -55,9 +51,8 @@ public class Test
 		}
 	}
 
-	public Test(String ip, int port,MainActivity m)
+	public Test(String ip, int port)
 	{
-		ma=m;
 		rpq=new PriorityQueue(ip,port);
 
 		if(RPQ)
@@ -83,7 +78,6 @@ public class Test
 		{
 			case ALTER:
 			{
-				if(rpq.getSize()==0)return;
 				rpq.alter(rpq.getOne(r.nextInt()),op.value);
 				break;
 			}
@@ -94,7 +88,6 @@ public class Test
 			}
 			case DELTA:
 			{
-				if(rpq.getSize()==0)return;
 				rpq.delta(rpq.getOne(r.nextInt()),op.value);
 				break;
 			}

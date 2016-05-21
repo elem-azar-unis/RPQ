@@ -23,10 +23,10 @@ class Communicator implements Runnable
 		try
 		{
 			spq=pq;
-			in=new Receiver(socket);
 			out=new Sender(socket);
-			out.send(new Update(spq.queue.getUpdate(spq.versionCtrl.tell())));		
+			out.send(new Update(spq.queue.getUpdate(spq.versionCtrl.tell())));
 			spq.addClient(new Node(out));
+			in=new Receiver(socket);
 		}
 		catch (IOException e)
 		{
@@ -40,6 +40,7 @@ class Communicator implements Runnable
 			while(true)
 			{
 				Message m=in.recv();
+				System.out.println("message");
 				switch (m.type)
 				{
 					case Message.ALTER :

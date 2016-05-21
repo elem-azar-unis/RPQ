@@ -29,9 +29,9 @@ public class PriorityQueue
 		conn=new ClientConnector(ip, port);
 		conn.connect();
 		communicator=new Communicator(this);
-		new Thread(communicator).run();
 		updater=new Updater(this);
-		new Thread(updater).run();
+		new Thread(updater).start();
+		new Thread(communicator).start();
 	}
 	public ArrayList<Content<?, ?>> getK()
 	{
@@ -104,5 +104,10 @@ public class PriorityQueue
 	public int getSize()
 	{
 		return queue.getSize();
+	}
+
+	public void update(ArrayList<Content<?, ?>> lst, int i)
+	{
+		queue.update(lst,i);
 	}
 }

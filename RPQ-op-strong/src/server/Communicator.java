@@ -4,12 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 import kernel.Element;
-import message.Alter;
-import message.Delete;
-import message.Delta;
-import message.Insert;
-import message.Max;
-import message.Message;
+import message.*;
 import connector.Receiver;
 import connector.Sender;
 
@@ -23,9 +18,10 @@ class Communicator implements Runnable
 		try
 		{
 			spq=pq;
-			in=new Receiver(socket);
 			out=new Sender(socket);
+			out.send(new Update(spq.queue.getUpdate(spq.getSize())));
 			spq.addClient(new Node(out));
+			in=new Receiver(socket);
 		}
 		catch (IOException e)
 		{

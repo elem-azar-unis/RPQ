@@ -4,6 +4,7 @@ import message.Content;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * Synchronized on the queue.
@@ -220,6 +221,39 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 	    	return rtn;
 		}
     }
+
+	public void update(ArrayList<Content<?, ?>>arr,V inf)
+	{
+		synchronized (this)
+		{
+			if(arr.size()==0)return;
+			HashSet<K> temp = new HashSet<>();
+			for (Content<?, ?> content : arr)
+			{
+				temp.add((K) content.key);
+				if (contains((K) content.key))
+				{
+					alter((K) content.key, (V) content.value);
+				} else
+				{
+					insert((T) new Element<>((K) content.key, (V) content.value));
+				}
+			}
+			while(!temp.contains(((T) elements[0]).key))
+			{
+				((T)elements[0]).priority=inf;
+				shiftDown(0);
+			}
+			for (int i = 0; i < arr.size(); i++)
+			{
+				if (!temp.contains(((T) elements[i]).key))
+				{
+					((T)elements[i]).priority=inf;
+					shiftDown(i);
+				}
+			}
+		}
+	}
 
 	public K getOne(int in)
 	{

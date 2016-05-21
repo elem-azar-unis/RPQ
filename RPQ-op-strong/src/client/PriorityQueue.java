@@ -29,7 +29,7 @@ public class PriorityQueue
 		conn=new ClientConnector(ip, port);
 		conn.connect();
 		communicator=new Communicator(this);
-		new Thread(communicator).run();
+		new Thread(communicator).start();
 		updater=new Updater(this);
 	}
 	void reconnect()

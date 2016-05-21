@@ -1,6 +1,8 @@
 package connector;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ClientConnector
@@ -8,6 +10,8 @@ public class ClientConnector
 	private String ip;
 	private int port;
 	Socket socket=null;
+	ObjectInputStream in;
+	ObjectOutputStream out;
 	/**
 	 * continue to run
 	 */
@@ -46,6 +50,8 @@ public class ClientConnector
 			try
 			{
 				socket=new Socket(ip,port);
+				in=new ObjectInputStream(socket.getInputStream());
+				out=new ObjectOutputStream(socket.getOutputStream());
 				break;
 			}
 			catch (IOException e)

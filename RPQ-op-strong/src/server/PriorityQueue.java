@@ -17,7 +17,7 @@ import connector.Sender;
 
 public class PriorityQueue
 {
-	private final KernelPriorityQueue<String,Integer, Element<String,Integer>> queue=new KernelPriorityQueue<>();
+	final KernelPriorityQueue<String,Integer, Element<String,Integer>> queue=new KernelPriorityQueue<>();
 	private final List<Node> clients = new LinkedList<>();
 	private int count=0;
 	private final Boolean countLock=true;

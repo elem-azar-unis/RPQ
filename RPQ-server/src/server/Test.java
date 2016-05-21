@@ -14,8 +14,8 @@ public class Test
     private Logger log;
 
     private static final int port=9000;
-    private static final int log_count=2000;
-    private static final int interval=500;
+    private static final int log_count=200;
+    private static final int interval=50;
     private static final String logFile="RPQ_server.log";
     private static final boolean RPQ=true;
 
@@ -45,7 +45,7 @@ public class Test
     public static void main(String[] args) throws IOException, InterruptedException
     {
         Test m=new Test();
-        Thread.sleep(5000);
+        Thread.sleep(500000000);
         if (RPQ)
             m.test_RPQ();
         else

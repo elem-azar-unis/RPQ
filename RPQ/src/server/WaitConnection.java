@@ -17,6 +17,7 @@ class WaitConnection implements Runnable
 		while(true)
 		{
 			Socket recv=server.accept();
+			System.out.println("new client");
 			new Thread(new Communicator(recv,spq)).start();
 		}
 	}

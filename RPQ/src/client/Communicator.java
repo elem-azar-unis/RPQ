@@ -1,14 +1,13 @@
 package client;
 
-import java.io.IOException;
-
-import kernel.Element;
+import connector.ClientConnector;
+import connector.Receiver;
 import message.Content;
 import message.Delete;
 import message.Message;
 import message.Update;
-import connector.ClientConnector;
-import connector.Receiver;
+
+import java.io.IOException;
 
 class Communicator implements Runnable
 {
@@ -61,17 +60,7 @@ class Communicator implements Runnable
 	}
 	private void update(Update m)
 	{
-		for (Content<?, ?> content : m.lst)
-		{
-			if(cpq.queue.contains((String) content.key))
-			{
-				cpq.queue.alter((String) content.key,(Integer) content.value);
-			}
-			else 
-			{
-				cpq.queue.insert(new Element<>((String) content.key, (Integer) content.value));
-			}
-		}
+		cpq.update(m.lst,0);
 	}
 	@SuppressWarnings("unchecked")
 	private void delete(Delete m)

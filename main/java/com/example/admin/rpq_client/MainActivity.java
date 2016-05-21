@@ -1,7 +1,6 @@
 package com.example.admin.rpq_client;
 
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,9 +23,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        StrictMode.ThreadPolicy policy=new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
         textIp=(EditText) findViewById(R.id.IP);
         textPort=(EditText) findViewById(R.id.PORT);
 
@@ -34,10 +30,9 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //m=new Test(
-                //        textIp.getText().toString().trim(),
-                //       Integer.parseInt(textPort.getText().toString().trim()),MainActivity.this);
-                Test m=new Test("192.168.1.117", 9000,MainActivity.this);
+                m=new Test(
+                        textIp.getText().toString().trim(),
+                        Integer.parseInt(textPort.getText().toString().trim()));
                 m.benchmark();
             }
         });

@@ -7,9 +7,9 @@ import java.util.Random;
  */
 public class OpGen
 {
+    private Random random = new Random();
     private final String name=getRandomString(5);
     private int count=0;
-    private Random random = new Random();
 
     private static final int maxN=2<<15;
     private static final int maxD=2<<7;
@@ -27,7 +27,8 @@ public class OpGen
         for (int i = 0; i < length; i++)
         {
             int number = random.nextInt(base.length());
-            sb.append(base.charAt(number));
+            char c=base.charAt(number);
+            sb.append(c);
         }
         return sb.toString();
     }

@@ -15,14 +15,7 @@ public class Sender
 	}
 	public Sender(ClientConnector c)
 	{
-		try
-		{
-			out=new ObjectOutputStream(c.socket.getOutputStream());
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		out=c.out;
 	}
 	/**
 	 * used when reconnected
@@ -48,14 +41,16 @@ public class Sender
 	 */
 	public void reset(ClientConnector c) 
 	{
-		try
-		{
-			reset(c.socket);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		if(out!=null)
+			try
+			{
+				out.close();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		out=c.out;
 	}
 	public void close()
 	{

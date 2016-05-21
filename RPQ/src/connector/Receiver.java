@@ -15,14 +15,7 @@ public class Receiver
 	}
 	public Receiver(ClientConnector c)
 	{
-		try
-		{
-			in=new ObjectInputStream(c.socket.getInputStream());
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+		in=c.in;
 	}
 	/**
 	 * used when reconnected
@@ -48,14 +41,16 @@ public class Receiver
 	 */
 	public void reset(ClientConnector c)
 	{
-		try
-		{
-			reset(c.socket);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		if(in!=null)
+			try
+			{
+				in.close();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		in=c.in;
 	}
 	public void close()
 	{
