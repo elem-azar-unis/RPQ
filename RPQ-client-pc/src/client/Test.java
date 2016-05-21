@@ -16,17 +16,18 @@ import java.util.Random;
  */
 public class Test
 {
-    private static final int log_count=200;//200
-    private static final int interval=50;//50
-    private static final int op_interval=50;//50
+    private static final int log_count=1;//200
+    private static final int interval=5000;//50
+    private static final int op_interval=1;//50
     private static final String logFile="RPQ_client.log";
-    private static final boolean RPQ=true;
+    private static final boolean RPQ=false;
 
     private PriorityQueue rpq;
     private OpGen gen=new OpGen();
     private Logger log;
     private Random r=new Random();
 
+    /*
     private class logger implements Runnable
     {
         public void run()
@@ -37,6 +38,7 @@ public class Test
                 {
                     Thread.sleep(interval);
                     log.add(rpq.getK());
+                    System.out.print(i+" ");
                 }
                 log.flush_close();
                 System.out.println("Log Finished");
@@ -47,6 +49,7 @@ public class Test
             }
         }
     }
+    */
 
     public Test(String ip, int port)
     {
@@ -57,7 +60,6 @@ public class Test
             {
                 FileOutputStream f_out =new FileOutputStream(logFile);
                 log=new Logger(f_out);
-                new Thread(new logger()).start();
             }
             catch(FileNotFoundException e)
             {
@@ -79,6 +81,7 @@ public class Test
             }
             case DELETE:
             {
+                if(rpq.getSize()==0)return;
                 rpq.delete();
                 break;
             }
@@ -98,7 +101,7 @@ public class Test
 
     public void benchmark()
     {
-        for(int i=0;i<log_count*interval/op_interval;i++)
+        while(true)
             ran_op();
     }
 

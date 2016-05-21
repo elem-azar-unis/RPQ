@@ -21,8 +21,8 @@ import log.Logger;
  */
 public class Test
 {
-	private static final int log_count=200;
-	private static final int interval=50;
+	private static final int log_count=60;
+	private static final int interval=500;
 	private static final int op_interval=50;//50
 	private static final String logFile="RPQ_client.log";
 	private static final boolean RPQ=true;
@@ -89,6 +89,7 @@ public class Test
 			}
 			case DELETE:
 			{
+				if(rpq.getSize()==0)return;
 				rpq.delete();
 				break;
 			}

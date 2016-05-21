@@ -66,6 +66,7 @@ public class Sender
 	}
 	public void send(Message m) throws IOException
 	{
+		//System.out.println("send "+m.toString());
 		out.writeObject(m);
 	}
 }

@@ -40,7 +40,6 @@ class Communicator implements Runnable
 			while(true)
 			{
 				Message m=in.recv();
-				System.out.println("message");
 				switch (m.type)
 				{
 					case Message.ALTER :

@@ -66,6 +66,8 @@ public class Receiver
 	}
 	public Message recv() throws ClassNotFoundException, IOException
 	{
-		return (Message)in.readObject();
+		Message m= (Message)in.readObject();
+		//System.out.println("recv "+m.toString());
+		return m;
 	}
 }

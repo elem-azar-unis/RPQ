@@ -236,6 +236,7 @@ public class ServerPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 			{
 	    		tar.priority=((Node)elements[index]).desired;
 				((Node)elements[index]).desired=null;
+				if(tar.priority==null)return getHeight();
 			}    	
 	    	if(pre==null || pre.compareTo(tar.priority)<0)
 	    		shiftUP(index);

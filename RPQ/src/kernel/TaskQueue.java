@@ -12,7 +12,7 @@ public class TaskQueue
 	final Collection<Element<?,?>> tasks=(new HashSet<>());
 	public boolean isEmpty()
 	{
-		synchronized (tasks)
+		synchronized (this)
 		{
 			return tasks.isEmpty();
 		}
@@ -32,7 +32,7 @@ public class TaskQueue
 	 */
 	public void add(Element<?,?> e)
 	{
-		synchronized (tasks)
+		synchronized (this)
 		{
 			tasks.add(e);
 			notify();
@@ -44,7 +44,7 @@ public class TaskQueue
 	 */
 	public Element<?,?> get()
 	{
-		synchronized (tasks)
+		synchronized (this)
 		{
 			if(tasks.isEmpty())
 				return null;

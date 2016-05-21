@@ -27,7 +27,12 @@ class Applier implements Runnable
 					Element<String,Integer> e=(Element<String, Integer>) spq.tasks.get();
 					int level=spq.queue.apply(e);
 					if(spq.versionCtrl.update(spq.queue.getHeight(), level))
-						spq.versionCtrl.notify();
+					{
+						synchronized (spq.versionCtrl)
+						{
+							spq.versionCtrl.notify();
+						}
+					}
 				}	
 			}
 		}

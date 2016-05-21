@@ -155,7 +155,11 @@ public class PriorityQueue
 		synchronized (temp)
 		{
 			Integer i=queue.getDesired(temp.getIndex());
-			if(i==null)i=temp.priority+d;
+			if(i==null)
+			{
+				if (temp.priority==null)temp.priority=0;
+				i=temp.priority+d;
+			}
 			else i=i+d;
 			queue.alter(key,i);
 		}

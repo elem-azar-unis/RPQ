@@ -14,10 +14,10 @@ public class Test
     private Logger log;
 
     private static final int port=9000;
-    private static final int log_count=200;
-    private static final int interval=50;
+    private static final int log_count=1;
+    private static final int interval=5000;
     private static final String logFile="RPQ_server.log";
-    private static final boolean RPQ=true;
+    private static final boolean RPQ=false;
 
     private Test() throws FileNotFoundException
     {
@@ -26,7 +26,7 @@ public class Test
             log=new Logger(f_out);
         rpq=new PriorityQueue(port);
     }
-    private void test_RPQ() throws InterruptedException
+    /*private void test_RPQ() throws InterruptedException
     {
         for(int i=0;i<log_count;i++)
         {
@@ -35,9 +35,11 @@ public class Test
         }
         log.flush_close();
     }
+    **/
     private void test_strong_RPQ() throws InterruptedException, IOException
     {
         Thread.sleep(interval*log_count);
+        System.out.println(rpq.getCount());
         f_out.write(rpq.getCount());
         f_out.flush();
         f_out.close();
@@ -45,10 +47,10 @@ public class Test
     public static void main(String[] args) throws IOException, InterruptedException
     {
         Test m=new Test();
-        Thread.sleep(500000000);
-        if (RPQ)
-            m.test_RPQ();
-        else
+        Thread.sleep(5000);
+        //if (RPQ)
+        //    m.test_RPQ();
+        //else
             m.test_strong_RPQ();
     }
 }

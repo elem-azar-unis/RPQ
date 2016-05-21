@@ -257,7 +257,7 @@ public class ClientPriorityQueue<K,V extends Comparable<V>,T extends Element<K,V
 
 	public K getOne(int in)
 	{
-		return ((T)elements[in%size]).key;
+		return ((T)elements[Math.abs(in)%size]).key;
 	}
 	public int getSize()
 	{

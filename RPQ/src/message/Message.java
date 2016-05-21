@@ -15,4 +15,18 @@ public class Message implements Serializable
 	public static final short UPDATE=5;
 	
 	public short type;
+
+	public String toString()
+	{
+		switch (type)
+		{
+			case INSERT:return "INSERT";
+			case DELETE:return "DELETE";
+			case ALTER:return "ALTER";
+			case DELTA:return "DELTA";
+			case MAX:return "MAX";
+			case UPDATE:return "UPDATE";
+		}
+		return "UNKNOWN";
+	}
 }
